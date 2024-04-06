@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.lab2.R
 import com.example.lab2.SecondActivity
 import com.example.lab2.adapter.AnimalAdapter
 import com.example.lab2.databinding.FragmentAnimalListBinding
@@ -48,9 +49,16 @@ class AnimalListFragment : Fragment() {
     }
 
     private fun handleAnimalClick(animal: Animal){
-        val intent = Intent(requireContext(), SecondActivity::class.java)
-        intent.putExtra(SecondActivity.KEY_RESULT, animal.name)
-        startActivity(intent)
+//        val intent = Intent(requireContext(), SecondActivity::class.java)
+//        intent.putExtra(SecondActivity.KEY_RESULT, animal.name)
+//        startActivity(intent)
+
+        val animalDetailsFragment = AnimalDetailsFragment.newInstance(animal.name)
+
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, animalDetailsFragment)
+            .commit()
     }
 
     private fun handleAnimalRemoval(animal: Animal){
