@@ -1,5 +1,6 @@
 package com.example.lab2.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,7 +8,15 @@ import com.example.lab2.databinding.ItemAnimalBinding
 import com.example.lab2.model.Animal
 import java.io.File.separator
 
-class AnimalAdapter : RecyclerView.Adapter<AnimalAdapter.ViewHolder>() {
+class AnimalAdapter(
+    private val onAnimalClick: (Animal) -> Unit,
+    private val onAnimalRemoved: (Animal) ->Unit
+) : RecyclerView.Adapter<AnimalAdapter.ViewHolder>() {
+
+    companion object{
+        private const val ANIMAL_ADAPTER_TAG = "AnimalAdapter"
+    }
+
 
     private val animalList: ArrayList<Animal> = ArrayList()
 
@@ -19,6 +28,7 @@ class AnimalAdapter : RecyclerView.Adapter<AnimalAdapter.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        Log.d(ANIMAL_ADAPTER_TAG, "onCreateViewHolder")
         return ViewHolder(
             ItemAnimalBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false)
@@ -28,6 +38,7 @@ class AnimalAdapter : RecyclerView.Adapter<AnimalAdapter.ViewHolder>() {
     override fun getItemCount() = animalList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        Log.d(ANIMAL_ADAPTER_TAG, "onBindViewHolder: $position")
         holder.bind(animalList[position])
     }
 
@@ -38,8 +49,15 @@ class AnimalAdapter : RecyclerView.Adapter<AnimalAdapter.ViewHolder>() {
         fun bind(animal: Animal){
             with(binding){
                 animalName.text = animal.name
-                animalTaxonomy.text = animal.taxonomy.joinToString(separator = ", ")
-                animalLocation.text = animal.taxonomy.joinToString(separator = ", ")
+                animalTaxonomy.text = animal.taxonomy
+                animalLocation.text = animal.location
+
+                root.setOnClickListener{
+                    onAnimalClick(animal)
+                }
+                removeAnimal.setOnClickListener{
+                    onAnimalRemoved(animal)
+                }
             }
         }
     }
