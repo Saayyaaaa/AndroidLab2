@@ -57,6 +57,7 @@ class AnimalListFragment : Fragment() {
 
         requireActivity().supportFragmentManager
             .beginTransaction()
+            .addToBackStack(null)
             .replace(R.id.fragment_container, animalDetailsFragment)
             .commit()
     }
