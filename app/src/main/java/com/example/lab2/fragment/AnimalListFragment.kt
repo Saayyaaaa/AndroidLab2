@@ -1,17 +1,19 @@
 package com.example.lab2.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.lab2.R
-import com.example.lab2.SecondActivity
 import com.example.lab2.adapter.AnimalAdapter
 import com.example.lab2.databinding.FragmentAnimalListBinding
 import com.example.lab2.model.Animal
 import com.example.lab2.model.AnimalDataSource
+import com.example.lab2.network.ApiClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AnimalListFragment : Fragment() {
 
@@ -61,7 +63,25 @@ class AnimalListFragment : Fragment() {
             )
             adapter?.setData(AnimalDataSource.animalList)
         }
+
+        val client = ApiClient.instance
+        val response = client.fetchAnimalList()
+
+        response.enqueue(object : Callback<List<Animal>>{
+            override fun onResponse(call: Call<List<Animal>>, response: Response<List<Animal>>) {
+                println("HttpResponse: $response")
+            }
+
+            override fun onFailure(call: Call<List<Animal>>, t: Throwable) {
+                println("HttpResponse: $t")
+            }
+
+        })
     }
+
+
+
+
 
     private fun handleAnimalClick(animal: Animal){
 //        val intent = Intent(requireContext(), SecondActivity::class.java)

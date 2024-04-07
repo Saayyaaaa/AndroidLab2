@@ -1,7 +1,8 @@
-package com.example.lab2
+package com.example.lab2.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.lab2.R
 import com.example.lab2.databinding.ActivityMainBinding
 import com.example.lab2.fragment.AnimalListFragment
 
