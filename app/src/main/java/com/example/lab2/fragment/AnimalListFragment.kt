@@ -9,6 +9,7 @@ import com.example.lab2.R
 import com.example.lab2.adapter.AnimalAdapter
 import com.example.lab2.databinding.FragmentAnimalListBinding
 import com.example.lab2.model.Animal
+import com.example.lab2.model.AnimalApiResponse
 import com.example.lab2.model.AnimalDataSource
 import com.example.lab2.network.ApiClient
 import retrofit2.Call
@@ -52,13 +53,16 @@ class AnimalListFragment : Fragment() {
         requireActivity().supportFragmentManager.setFragmentResultListener(
             "AnimalNameResult",
             viewLifecycleOwner
-        ){requestKey, bundle ->
+        ) { requestKey, bundle ->
             val result = bundle.getString("bundleKey")
             AnimalDataSource.animalList.add(
                 Animal(
-                    name = result!!,
-                    taxonomy = "zxcv",
-                    location = "fghj"
+                    kingdom = result!!,
+                    phylum = "String",
+                    order = "String",
+                    family = "String",
+                    genus = "String",
+                    scientificName = "String"
                 )
             )
             adapter?.setData(AnimalDataSource.animalList)
@@ -67,13 +71,16 @@ class AnimalListFragment : Fragment() {
         val client = ApiClient.instance
         val response = client.fetchAnimalList()
 
-        response.enqueue(object : Callback<List<Animal>>{
-            override fun onResponse(call: Call<List<Animal>>, response: Response<List<Animal>>) {
-                println("HttpResponse: $response")
+        response.enqueue(object : Callback <AnimalApiResponse>{
+            override fun onResponse(
+                call: Call<AnimalApiResponse>,
+                response: Response<AnimalApiResponse>
+            ) {
+                println("HttpResponse: %response")
             }
 
-            override fun onFailure(call: Call<List<Animal>>, t: Throwable) {
-                println("HttpResponse: $t")
+            override fun onFailure(call: Call<AnimalApiResponse>, t: Throwable) {
+                println("HttpResponse: %t")
             }
 
         })
@@ -88,7 +95,7 @@ class AnimalListFragment : Fragment() {
 //        intent.putExtra(SecondActivity.KEY_RESULT, animal.name)
 //        startActivity(intent)
 
-        val animalDetailsFragment = AnimalDetailsFragment.newInstance(animal.name)
+        val animalDetailsFragment = AnimalDetailsFragment.newInstance(animal.kingdom)
 
         requireActivity().supportFragmentManager
             .beginTransaction()
@@ -103,6 +110,4 @@ class AnimalListFragment : Fragment() {
 
         adapter?.setData(animalList)
     }
-
-
 }

@@ -48,9 +48,12 @@ class AnimalAdapter(
 
         fun bind(animal: Animal){
             with(binding){
-                animalName.text = animal.name
-                animalTaxonomy.text = animal.taxonomy
-                animalLocation.text = animal.location
+                animalKingdom.text = animal.kingdom
+                animalPhylum.text = animal.phylum
+                animalOrder.text = animal.order
+                animalFamily.text = animal.family
+                animalGenus.text = animal.genus
+                animalScientificName.text = animal.scientificName
 
                 root.setOnClickListener{
                     onAnimalClick(animal)

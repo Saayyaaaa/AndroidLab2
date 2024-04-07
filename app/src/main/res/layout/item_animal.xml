@@ -13,22 +13,39 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/animal_name"
+            android:id="@+id/animal_kingdom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="name"/>
+            tools:text="kingdom"/>
 
         <TextView
-            android:id="@+id/animal_taxonomy"
+            android:id="@+id/animal_phylum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="taxonomy"/>
+            tools:text="phylum"/>
 
         <TextView
-            android:id="@+id/animal_location"
+            android:id="@+id/animal_order"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="location"/>
+            tools:text="order"/>
+        <TextView
+            android:id="@+id/animal_family"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="family"/>
+
+        <TextView
+            android:id="@+id/animal_genus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="genus"/>
+
+        <TextView
+            android:id="@+id/animal_scientificName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="scientificName"/>
 
     </LinearLayout>
 
