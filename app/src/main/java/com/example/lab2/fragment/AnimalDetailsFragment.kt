@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import com.example.lab2.R
 import com.example.lab2.databinding.FragmentAnimalDetailsBinding
 import com.example.lab2.databinding.FragmentAnimalListBinding
@@ -38,6 +40,12 @@ class AnimalDetailsFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         binding.animalName.text = name
+
+        binding.button.setOnClickListener{
+            val animalName = binding.editText.text.toString()
+            setFragmentResult("AnimalNameResult", bundleOf("bundleKey" to animalName))
+            requireActivity().onBackPressed()
+        }
     }
 
 

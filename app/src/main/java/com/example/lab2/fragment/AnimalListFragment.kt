@@ -46,6 +46,21 @@ class AnimalListFragment : Fragment() {
 
         binding.recyclerView.adapter = adapter
         adapter?.setData(AnimalDataSource.animalList)
+
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            "AnimalNameResult",
+            viewLifecycleOwner
+        ){requestKey, bundle ->
+            val result = bundle.getString("bundleKey")
+            AnimalDataSource.animalList.add(
+                Animal(
+                    name = result!!,
+                    taxonomy = "zxcv",
+                    location = "fghj"
+                )
+            )
+            adapter?.setData(AnimalDataSource.animalList)
+        }
     }
 
     private fun handleAnimalClick(animal: Animal){
