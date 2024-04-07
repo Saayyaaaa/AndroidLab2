@@ -15,11 +15,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val animalListFragment = AnimalListFragment.newInstance()
-
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.fragment_container, animalListFragment)
+            .add(R.id.fragment_container_view, AnimalListFragment())
             .commit()
     }
 }

@@ -1,16 +1,17 @@
 package com.example.lab2.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.lab2.R
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.example.lab2.adapter.AnimalAdapter
 import com.example.lab2.databinding.FragmentAnimalListBinding
 import com.example.lab2.model.Animal
-import com.example.lab2.model.AnimalApiResponse
-import com.example.lab2.model.AnimalDataSource
+import com.example.lab2.network.AnimalService
 import com.example.lab2.network.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,93 +22,77 @@ class AnimalListFragment : Fragment() {
     private var _binding: FragmentAnimalListBinding? = null
     private val binding get() = _binding!!
 
-    companion object {
-        fun newInstance() = AnimalListFragment()
+    private val adapter: AnimalAdapter by lazy {
+        AnimalAdapter()
     }
 
-    private var adapter: AnimalAdapter? = null
+    private val animalSevice: AnimalService by lazy {
+        ApiClient.instance
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentAnimalListBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentAnimalListBinding
+            .inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI()
+        fetchData("")
+        setupSearch()
+    }
 
-        adapter = AnimalAdapter(
-            onAnimalClick = {
-                handleAnimalClick(it)
-            },
-            onAnimalRemoved = {
-                handleAnimalRemoval(it)
-            }
-        )
+    private fun setupUI() {
+        binding.animalList.adapter = adapter
+    }
 
-        binding.recyclerView.adapter = adapter
-        adapter?.setData(AnimalDataSource.animalList)
 
-        requireActivity().supportFragmentManager.setFragmentResultListener(
-            "AnimalNameResult",
-            viewLifecycleOwner
-        ) { requestKey, bundle ->
-            val result = bundle.getString("bundleKey")
-            AnimalDataSource.animalList.add(
-                Animal(
-                    kingdom = result!!,
-                    phylum = "String",
-                    order = "String",
-                    family = "String",
-                    genus = "String",
-                    scientificName = "String"
-                )
-            )
-            adapter?.setData(AnimalDataSource.animalList)
-        }
-
-        val client = ApiClient.instance
-        val response = client.fetchAnimalList()
-
-        response.enqueue(object : Callback <AnimalApiResponse>{
+    private fun fetchData(query: String) {
+        animalSevice.fetchAnimalList(query).enqueue(object : Callback<List<Animal>> {
             override fun onResponse(
-                call: Call<AnimalApiResponse>,
-                response: Response<AnimalApiResponse>
+                call: Call<List<Animal>>,
+                response: Response<List<Animal>>
             ) {
-                println("HttpResponse: %response")
+                if (response.isSuccessful) {
+                    println("HttpResponse: True")
+                    adapter.submitList(response.body())
+                } else {
+                    println("HttpResponse: False")
+                    showError("Failed to fetch data: ${response.code()}")
+                }
             }
 
-            override fun onFailure(call: Call<AnimalApiResponse>, t: Throwable) {
-                println("HttpResponse: %t")
+            override fun onFailure(call: Call<List<Animal>>, t: Throwable) {
+                showError("Network error: ${t.message}")
+            }
+        })
+        println("HttpResponse: 2+2")
+    }
+
+
+    private fun setupSearch() {
+        binding.search.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                fetchData(s.toString())
             }
 
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
 
 
-
-
-
-    private fun handleAnimalClick(animal: Animal){
-//        val intent = Intent(requireContext(), SecondActivity::class.java)
-//        intent.putExtra(SecondActivity.KEY_RESULT, animal.name)
-//        startActivity(intent)
-
-        val animalDetailsFragment = AnimalDetailsFragment.newInstance(animal.kingdom)
-
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .addToBackStack(null)
-            .replace(R.id.fragment_container, animalDetailsFragment)
-            .commit()
+    private fun showError(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun handleAnimalRemoval(animal: Animal){
-        val animalList = AnimalDataSource.animalList
-        animalList.remove(animal)
-
-        adapter?.setData(animalList)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
